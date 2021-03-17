@@ -12,7 +12,7 @@ class WebViewMain extends StatefulWidget {
 
 class WebViewMainState extends State<WebViewMain>
     with SingleTickerProviderStateMixin {
-  late TabController _controller;
+  TabController _controller;
   int index = 0;
   List<List<Cookie>> cookieList = [[], []];
   List<Uri> urls = [
@@ -20,12 +20,12 @@ class WebViewMainState extends State<WebViewMain>
     Uri.parse('https://www.supremenewyork.com/mobile'),
   ];
   List<List<WebStorageItem>> localStorage = [[], []];
-  List<InAppWebViewController?> controllers = [null, null];
-  List<Map<String, String>> proxies = [
-    {'host': '62.23.15.92', 'port': '3128'},
-    {'host': '62.210.110.6', 'port': '3128'},
+  List<InAppWebViewController> controllers = [null, null];
+  List<Uri> proxies = [
+    Uri.parse('http://62.23.15.92:3128'),
+    Uri.parse('http://62.210.110.6:3128'),
   ];
-  late HttpProxy httpProxy;
+  HttpProxy httpProxy;
 
   @override
   void initState() {
@@ -72,9 +72,9 @@ class WebViewMainState extends State<WebViewMain>
 
   Future init() async {
     httpProxy = await HttpProxy.createHttpProxy();
-
-    httpProxy.host = proxies[index]['host'];
-    httpProxy.port = proxies[index]['port'];
+    //httpProxy.host = proxies[index]['host'];
+    //httpProxy.port = proxies[index]['port'];
+    httpProxy.findProxyFromEnvironment(proxies[index], {});
     HttpOverrides.global = httpProxy;
   }
 
@@ -97,10 +97,7 @@ class WebViewMainState extends State<WebViewMain>
             Tab(icon: Icon(Icons.directions_transit)),
           ],
         ),
-        body: TabBarView(controller: _controller, children: [
-          WebTab(onUpdate),
-          WebTab(onUpdate),
-        ]),
+        body: TabBarView(controller: _controller, children: []),
       )),
     );
   }
